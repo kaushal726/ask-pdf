@@ -51,7 +51,7 @@ Follow these steps to get the project up and running:
 2. Run the following command to start the application:
 
    ```bash
-   node index.js
+   bash start.sh
    ```
 
 3. The program will extract text from the PDF file and send it to OpenAI for summarization or interaction. The response will be printed in the console.
@@ -59,7 +59,7 @@ Follow these steps to get the project up and running:
 ### Example
 
 ```bash
-node index.js
+bash start.sh
 ```
 
 Output:
