@@ -31,63 +31,34 @@ async function askOpenAI(prompt) {
   }
 }
 
-// async function getEmbedding(text) {
-//   const response = await openai.embeddings.create({
-//     model: "text-embedding-ada-002",
-//     input: text,
-//   });
-//   return response.data[0].embedding; // This will return the embedding vector
-// }
-
-// // Store the chunks with their embeddings
-// async function processAndEmbedChunks(chunks) {
-//   const chunkEmbeddings = [];
-
-//   for (const chunk of chunks) {
-//     const embedding = await getEmbedding(chunk);
-//     chunkEmbeddings.push({ chunk, embedding });
-//   }
-
-//   return chunkEmbeddings;
-// }
-
-module.exports = { askOpenAI };
-
 const { extractPdfText, chunkText } = require("./text.extractor");
 const { getEmbedding, processAndEmbedChunks } = require("./embedding");
 const { findRelevantChunks } = require("./similarity");
 
 async function chatWithRelevantText(pdfPath, prompt) {
   try {
-    // Step 1: Extract text from PDF
     const extractedText = await extractPdfText(pdfPath);
 
-    // Step 2: Chunk the text
     const chunks = chunkText(extractedText);
-    // console.log(chunks);
 
-    // Step 3: Embed the text chunks
     const chunkEmbeddings = await processAndEmbedChunks(chunks);
 
-    // Step 4: Embed the query (prompt)
     const queryEmbedding = await getEmbedding(prompt);
 
-    // Step 5: Find the relevant chunks based on similarity
     const relevantChunks = await findRelevantChunks(
       queryEmbedding,
       chunkEmbeddings
     );
-    console.log(relevantChunks);
 
-    // Step 6: Combine relevant chunks and send to ChatGPT
     const combinedText = relevantChunks.join(" ");
     const finalPrompt = prompt + "\n\n" + combinedText;
 
-    const response = await askOpenAI(finalPrompt); // Your OpenAI API call
+    const response = await askOpenAI(finalPrompt);
+
     console.log("ChatGPT Response:", response);
   } catch (error) {
     console.error("Error:", error);
   }
 }
 
-module.exports = { chatWithRelevantText };
+module.exports = { chatWithRelevantText, askOpenAI };
