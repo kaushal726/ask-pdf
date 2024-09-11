@@ -1,3 +1,5 @@
+const appConfig = require("./data/config.json");
+
 function cosineSimilarity(vecA, vecB) {
   const dotProduct = vecA.reduce((acc, val, i) => acc + val * vecB[i], 0);
   const magnitudeA = Math.sqrt(vecA.reduce((acc, val) => acc + val * val, 0));
@@ -11,7 +13,7 @@ async function findRelevantChunks(queryEmbedding, chunkEmbeddings) {
   for (const { chunk, embedding } of chunkEmbeddings) {
     const similarity = cosineSimilarity(queryEmbedding, embedding);
 
-    if (similarity > 0.5) {
+    if (similarity > appConfig.THRESHOLD) {
       relevantChunks.push(chunk);
     }
   }
