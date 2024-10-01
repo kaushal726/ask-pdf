@@ -1,13 +1,17 @@
-require("dotenv").config();
-const { OpenAI } = require("openai");
-const appConfig = require("./data/config.json");
+import dotenv from 'dotenv';
+import { OpenAI } from 'openai';
+import appConfig from './data/config.json';
+import { extractPdfText, chunkText } from './text.extractor';
+import { getEmbedding, processAndEmbedChunks } from './embedding';
+import { findRelevantChunks } from './similarity';
+
+dotenv.config();
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY,
 });
 
-async function askOpenAI(prompt) {
-  console.log(prompt);
+export const askOpenAI = async (prompt) => {
 
   try {
     const { MAX_TOKEN, MODEL, TEMPERATURE } = appConfig;
@@ -29,13 +33,9 @@ async function askOpenAI(prompt) {
       throw error;
     }
   }
-}
+};
 
-const { extractPdfText, chunkText } = require("./text.extractor");
-const { getEmbedding, processAndEmbedChunks } = require("./embedding");
-const { findRelevantChunks } = require("./similarity");
-
-async function chatWithRelevantText(pdfPath, prompt) {
+export const chatWithRelevantText = async (pdfPath, prompt) => {
   try {
     const extractedText = await extractPdfText(pdfPath);
 
@@ -50,8 +50,8 @@ async function chatWithRelevantText(pdfPath, prompt) {
       chunkEmbeddings
     );
 
-    const combinedText = relevantChunks.join(" ");
-    const finalPrompt = prompt + "\n\n" + combinedText;
+    const combinedText = relevantChunks.join(' ');
+    const finalPrompt = `${prompt}\n\n${combinedText}`;
 
     const response = await askOpenAI(finalPrompt);
 
@@ -59,6 +59,4 @@ async function chatWithRelevantText(pdfPath, prompt) {
   } catch (error) {
     console.error("Error:", error);
   }
-}
-
-module.exports = { chatWithRelevantText, askOpenAI };
+};

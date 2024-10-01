@@ -1,9 +1,9 @@
-const PDFExtract = require("pdf.js-extract").PDFExtract;
-const pdfExtract = new PDFExtract();
+import { PDFExtract } from 'pdf.js-extract';
 
+const pdfExtract = new PDFExtract();
 const options = {};
 
-async function extractPdfText(pdfPath) {
+export const extractPdfText = (pdfPath) => {
   return new Promise((resolve, reject) => {
     pdfExtract.extract(pdfPath, options, (err, data) => {
       if (err) {
@@ -20,14 +20,12 @@ async function extractPdfText(pdfPath) {
       resolve(extractedText.trim());
     });
   });
-}
+};
 
-function chunkText(text, chunkSize = 2000) {
+export const chunkText = (text, chunkSize = 2000) => {
   const chunks = [];
   for (let i = 0; i < text.length; i += chunkSize) {
     chunks.push(text.substring(i, i + chunkSize));
   }
   return chunks;
-}
-
-module.exports = { extractPdfText, chunkText };
+};

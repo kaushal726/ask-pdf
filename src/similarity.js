@@ -1,13 +1,13 @@
-const appConfig = require("./data/config.json");
+import appConfig from './data/config.json';
 
-function cosineSimilarity(vecA, vecB) {
+export function cosineSimilarity(vecA, vecB) {
   const dotProduct = vecA.reduce((acc, val, i) => acc + val * vecB[i], 0);
   const magnitudeA = Math.sqrt(vecA.reduce((acc, val) => acc + val * val, 0));
   const magnitudeB = Math.sqrt(vecB.reduce((acc, val) => acc + val * val, 0));
   return dotProduct / (magnitudeA * magnitudeB);
 }
 
-async function findRelevantChunks(queryEmbedding, chunkEmbeddings) {
+export const findRelevantChunks = async (queryEmbedding, chunkEmbeddings) => {
   const relevantChunks = [];
 
   for (const { chunk, embedding } of chunkEmbeddings) {
@@ -19,6 +19,4 @@ async function findRelevantChunks(queryEmbedding, chunkEmbeddings) {
   }
 
   return relevantChunks;
-}
-
-module.exports = { cosineSimilarity, findRelevantChunks };
+};
